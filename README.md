@@ -1,5 +1,5 @@
 # SimpleEconomy
-SimpleEconomyは、マインクラフトでお金のやり取りをするためのプラグインです。
+SimpleEconomyは、マインクラフトにお金の概念を追加するプラグインです。
 
 ## プラグインの概要
 動作環境  
