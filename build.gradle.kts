@@ -33,11 +33,22 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.50.1.0")
 
     // JUnit 5
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.1")
+    testImplementation(platform("org.junit:junit-bom:5.10.3"))
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
 
     // MockK
     testImplementation("io.mockk:mockk:1.14.2")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 
 tasks {
