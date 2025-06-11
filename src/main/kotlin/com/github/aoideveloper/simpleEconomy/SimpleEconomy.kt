@@ -1,6 +1,7 @@
 package com.github.aoideveloper.simpleEconomy
 
 import com.github.aoideveloper.simpleEconomy.api.EconomyServiceImpl
+import com.github.aoideveloper.simpleEconomy.command.EconomyCommand
 import com.github.aoideveloper.simpleEconomy.database.DatabaseManager
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -26,6 +27,7 @@ class SimpleEconomy : JavaPlugin() {
         service = EconomyServiceImpl()
         service.loadAllBalances()
 
+        getCommand("economy")?.setExecutor(EconomyCommand)
         logger.info("SimpleEconomy has been enabled.")
     }
 
