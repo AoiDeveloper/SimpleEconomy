@@ -8,7 +8,6 @@ import java.util.UUID
 import kotlin.random.Random
 
 class EconomyServiceTest {
-
     @Test
     fun `口座の初期残高は0`() {
         // Arrange
@@ -45,9 +44,10 @@ class EconomyServiceTest {
         val negativeAmount = Random.nextDouble(-300.0, -0.1)
 
         // Act
-        val exception = assertThrows<IllegalArgumentException> {
-            economyService.deposit(playerId, negativeAmount)
-        }
+        val exception =
+            assertThrows<IllegalArgumentException> {
+                economyService.deposit(playerId, negativeAmount)
+            }
 
         // Assert
         assertEquals("Deposit amount must be non-negative.", exception.message)
