@@ -1,9 +1,47 @@
 package com.github.aoideveloper.simpleEconomy.api
 
+import com.github.aoideveloper.simpleEconomy.SimpleEconomy
+import com.github.aoideveloper.simpleEconomy.database.AccountBalances
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.upsert
 import java.util.UUID
+import kotlin.collections.forEach
 
 class EconomyServiceImpl : EconomyAPI<UUID, Double> {
     private val balances = mutableMapOf<UUID, Double>()
+
+    /**
+     * データベースから全ての残高を読み込み、メモリキャッシュを更新する
+     */
+    fun loadAllBalances() {
+        transaction {
+            // AccountBalancesテーブルの全レコードを選択
+            AccountBalances.selectAll().forEach { row ->
+                // 各行からaccountIdとbalanceを取得してキャッシュに格納
+                val accountId = row[AccountBalances.accountId]
+                val balance = row[AccountBalances.balance]
+                balances[accountId] = balance
+            }
+        }
+        SimpleEconomy.plugin.logger.info("Loaded ${balances.size} player balances from database.")
+    }
+
+    /**
+     * メモリキャッシュにある全ての残高をデータベースに保存する
+     */
+    fun saveAllBalances() {
+        transaction {
+            // メモリキャッシュの各エントリに対して処理
+            balances.forEach { (playerId, balance) ->
+                AccountBalances.upsert {
+                    it[AccountBalances.accountId] = playerId
+                    it[AccountBalances.balance] = balance
+                }
+            }
+        }
+        SimpleEconomy.plugin.logger.info("Saved ${balances.size} player balances to database.")
+    }
 
     override fun getBalance(accountId: UUID): Double {
         return balances.getOrDefault(accountId, 0.0)
